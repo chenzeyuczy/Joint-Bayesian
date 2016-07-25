@@ -1,0 +1,6 @@
+# Temp files.
+*.swp
+
+# Data files.
+*.pkl
+
