@@ -8,7 +8,7 @@ Implementation of joint bayesian model.
 import numpy as np
 import pickle
 
-def joint_bayesian(data, label):
+def train(data, label):
 	""" Joint bayesian training.
 	Args:
 		data: feature of data, stored as a two-dim numpy array.
@@ -83,7 +83,7 @@ def joint_bayesian(data, label):
 		Su = np.cov(u.T, rowvar=0)
 		Se = np.cov(e.T, rowvar=0)
 		convergence = np.linalg.norm(Se-oldSe) / np.linalg.norm(Se)
-		print("Iterations-" + str(l) + ": " + str(convergence))
+		print("Iterations " + str(l) + ": " + str(convergence))
 		if convergence < min_convergence:
 			break
 		oldSe = Se
@@ -126,9 +126,9 @@ if __name__ == '__main__':
 		labels = pickle.load(f)
 
 	model_file = './model.pkl'
-	TRAIN_AGAIN = False
+	TRAIN_AGAIN = True
 	if TRAIN_AGAIN:
-		A, G = joint_bayesian(feature, labels)
+		A, G = train(feature, labels)
 
 		with open(model_file, 'wb') as f:
 			pickle.dump(A, f)
@@ -146,7 +146,7 @@ if __name__ == '__main__':
 	n_pair = len(sim)
 
 	ratio_file = './ratio.pkl'
-	TEST_AGAIN = False
+	TEST_AGAIN = True
 
 	if TEST_AGAIN:
 		# Compute likelihood ratio
