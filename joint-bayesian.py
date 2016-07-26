@@ -8,6 +8,16 @@ Implementation of joint bayesian model.
 import numpy as np
 import pickle
 
+def preprocess(data):
+	''' Preprocess data by removing mean.
+	Args:
+		data: Two-dimension array storing original data.
+	Returns:
+		result: Data after preprocessing.
+	'''
+	result = data - data.mean(0)
+	return result
+
 def train(data, label):
 	""" Joint bayesian training.
 	Args:
@@ -124,6 +134,8 @@ if __name__ == '__main__':
 	with open(feat_file, 'rb') as f:
 		feature = pickle.load(f)
 		labels = pickle.load(f)
+
+	feature = preprocess(feature)
 
 	model_file = './model.pkl'
 	TRAIN_AGAIN = True

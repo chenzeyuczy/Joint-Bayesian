@@ -5,6 +5,7 @@ Implementation of [Joint-Bayesian model](http://home.ustc.edu.cn/~chendong/Joint
 ### Usage
 
 ```
+feature = preprocess(feature)
 A, G = train(feature, labels)
 ratio = verify(A, G, feat1, feat2)
 # ratio is the log likelihood between two features.
