@@ -15,8 +15,9 @@ def preprocess(data):
 	Returns:
 		result: Data after preprocessing.
 	'''
-	result = data - data.mean(0)
-	return result
+	mean_value = data.mean(0)
+	result = data - mean_value
+	return (result, mean_value)
 
 def train(data, label):
 	""" Joint bayesian training.
@@ -130,15 +131,16 @@ def verify(A, G, x1, x2):
 	return float(ratio)
 
 if __name__ == '__main__':
-	feat_file = './feature.pkl'
-	with open(feat_file, 'rb') as f:
+	feat_train_file = './feature_train.pkl'
+	feat_test_file = './feature_test.pkl'
+	with open(feat_train_file, 'rb') as f:
 		feature = pickle.load(f)
 		labels = pickle.load(f)
 
-	feature = preprocess(feature)
+	feature, mean_value = preprocess(feature)
 
 	model_file = './model.pkl'
-	TRAIN_AGAIN = True
+	TRAIN_AGAIN = False
 	if TRAIN_AGAIN:
 		A, G = train(feature, labels)
 
@@ -152,15 +154,20 @@ if __name__ == '__main__':
 		G = pickle.load(f)
 		print 'Load model from', model_file
 
-	feat1, feat2 = feature[::2, :], feature[1::2, :]
-	label1, label2 = labels[::2], labels[1::2]
-	sim = label1 == label2
-	n_pair = len(sim)
-
 	ratio_file = './ratio.pkl'
 	TEST_AGAIN = True
 
 	if TEST_AGAIN:
+		with open(feat_test_file, 'rb') as f:
+			feature = pickle.load(f)
+			labels = pickle.load(f)
+		feature -= mean_value
+
+		feat1, feat2 = feature[::2, :], feature[1::2, :]
+		label1, label2 = labels[::2], labels[1::2]
+		sim = label1 == label2
+		n_pair = len(sim)
+	
 		# Compute likelihood ratio
 		ratio = np.zeros(n_pair)
 		for i in xrange(n_pair):
@@ -188,5 +195,5 @@ if __name__ == '__main__':
 			best_thld = thld
 		print 'Threshold:', thld, "Accuracy:", accuracy 
 	pass
-	print 'Best thld:', best_thld, "Best acc:", max_acc 
+	print 'Best thld:', best_thld, "Best acc:", str(max_acc * 100) + '%' 
 
